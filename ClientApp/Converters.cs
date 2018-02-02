@@ -12,14 +12,15 @@ namespace ClientApp
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            DateTime inValue = (DateTime)value;
+            decimal inValue = (decimal)value;
 
-            return inValue.Month;
+            return (int)Math.Truncate(inValue);
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            throw new NotImplementedException();
+            int retVal = (int)value;
+            return (decimal)retVal;
         }
     }
 
@@ -27,14 +28,17 @@ namespace ClientApp
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            DateTime inValue = (DateTime)value;
+            decimal retVal;
+            decimal inValue = (decimal)value;
 
-            return inValue.Year;
+            retVal = inValue - Math.Truncate(inValue);
+            return (int)(retVal * 10000);
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            throw new NotImplementedException();
+            int retVal = (int)value;
+            return (decimal)retVal / 10000;
         }
     }
 }

@@ -59,7 +59,7 @@
             <TabItem Header="Refund"></TabItem>
         </TabControl>
         <DockPanel Grid.Row="1" HorizontalAlignment="Right" Margin="5">
-            <Button Name="Ok_Button" Content="Ok" Margin="5" MinWidth="50"/>
+            <Button Name="Ok_Button" Content="Ok" Margin="5" MinWidth="50" Click="Ok_Button_Click"/>
             <Button Name="Cancel_Button" Content="Cancel" Margin="5" MinWidth="50"/>
         </DockPanel>
     </Grid>

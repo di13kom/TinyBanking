@@ -21,7 +21,7 @@ namespace BankingTestApp
                 listener.Start();
                 HttpListenerContext context = listener.GetContext();
                 HttpListenerRequest req = context.Request;
-                if (req.ContentType == "\"application/json\"" && req.HttpMethod == "POST")
+                if (req.ContentType.Contains("application/json") && req.HttpMethod == "POST")
                 {
                     HttpListenerResponse resp = context.Response;
                     resp.ContentType = "application/json";

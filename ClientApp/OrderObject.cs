@@ -12,7 +12,7 @@ namespace ClientApp
         long _orderId;
         decimal _amount;
         double _cardNumber;
-        DateTime _expireDate;
+        decimal _expireDate;
         short _cvv;
         string _cardholder;
 
@@ -44,7 +44,7 @@ namespace ClientApp
             }
         }
 
-        public DateTime ExpireDate
+        public decimal ExpireDate
         {
             get
             {
@@ -53,7 +53,16 @@ namespace ClientApp
 
             set
             {
-                _expireDate = value;
+                if (_expireDate == 0)
+                    _expireDate = value;
+                else
+                {
+                    if (value > 1)
+                        _expireDate = (_expireDate - Math.Truncate(_expireDate)) + value;
+                    else
+                        _expireDate = Math.Truncate(_expireDate) + value;
+                }
+
                 NotifyPropertyChanged("ExpireDate");
             }
         }

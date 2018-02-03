@@ -33,15 +33,7 @@ namespace ClientApp
             YearCombo.ItemsSource = Enumerable.Range(2015, 20);
 
             BankingObject = LoadSettings();
-            //BankingObject = new BankingUserObject();
-            ////
-            //BankingObject.Amount = 100;
-            //BankingObject.CardHolder = "noName";
-            //BankingObject.CardNumber = 12341234;
-            //BankingObject.Cvv = 5344;
-            //BankingObject.ExpireDate = 01.2018m;
-            //BankingObject.OrderId = 2342424;
-            //
+
             this.DataContext = BankingObject;
 
             NetworkClient = new HttpClient();
@@ -53,8 +45,11 @@ namespace ClientApp
             try
             {
                 using (HttpResponseMessage response = await SendAsync())
-                    //Console.WriteLine($"response: {response.Content}");
+                {
                     respString = await response.Content.ReadAsStringAsync();
+                    //response.Dispose();
+                    MainTextBlock.Text = respString;
+                }
             }
             catch (Exception ex)
             {
@@ -66,11 +61,14 @@ namespace ClientApp
         {
             StringContent strCont;
             string jsonObj = JsonConvert.SerializeObject(BankingObject);
-            strCont = new StringContent(jsonObj, Encoding.UTF8, "application/json");
-            //strCont.Headers.Add("Allow", "Application/json");
-            //strCont.Headers.Add("Content-type", "Aplication/json");
-            strCont.Headers.Add("Content-Length", jsonObj.Length.ToString());
-            return await NetworkClient.PostAsync("http://localhost:7777/", strCont);
+
+            using (strCont = new StringContent(jsonObj, Encoding.UTF8, "application/json"))
+            {
+                //strCont.Headers.Add("Allow", "Application/json");
+                //strCont.Headers.Add("Content-type", "Aplication/json");
+                strCont.Headers.Add("Content-Length", jsonObj.Length.ToString());
+                return await NetworkClient.PostAsync("http://localhost:7777/", strCont);
+            }
         }
 
         private UserObject_Class LoadSettings()
@@ -82,9 +80,13 @@ namespace ClientApp
                 {
                     string inFile = File.ReadAllText(SettingsFile);
                     retVal = JsonConvert.DeserializeObject<UserObject_Class>(inFile);
+                    MainTextBlock.Text = "Settings file's loaded";
                 }
                 else
+                {
                     retVal = new UserObject_Class();
+                    MainTextBlock.Text = "Settings file is emtpy";
+                }
             }
             catch (Exception ex)
             {
@@ -99,6 +101,7 @@ namespace ClientApp
             {
                 string jsObj = JsonConvert.SerializeObject(BankingObject);
                 File.WriteAllText(SettingsFile, jsObj);
+                MainTextBlock.Text = "Settings file's saved";
             }
             catch (Exception ex)
             {

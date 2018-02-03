@@ -14,9 +14,29 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
-            <RowDefinition Height="50"/>
+            <RowDefinition Height="100"/>
         </Grid.RowDefinitions>
         <TabControl Grid.Row="0">
+            <TabItem Header="PayIn">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <DockPanel Grid.Row="1" VerticalAlignment="Center">
+                        <Label Content="Amount:" Width="120"/>
+                        <TextBox Text="{Binding Path=Amount, Mode=TwoWay}" HorizontalContentAlignment="Right"/>
+                    </DockPanel>
+                    <Separator Grid.Row="2" BorderThickness="2"/>
+                    <DockPanel Grid.Row="3">
+                        <Button Name="Ok_Button" Content="Ok" Margin="5" MinWidth="50" Click="Ok_Button_Click"/>
+                    </DockPanel>
+                </Grid>
+            </TabItem>
+            <TabItem Header="Status"></TabItem>
+            <TabItem Header="Refund"></TabItem>
             <TabItem Header="Settings">
                 <Grid>
                     <Grid.RowDefinitions>
@@ -25,46 +45,42 @@
                         <RowDefinition Height="*"/>
                         <RowDefinition Height="*"/>
                         <RowDefinition Height="*"/>
-                        <RowDefinition Height="*"/>
-                        <RowDefinition Height="*"/>
+                        <!--<RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>-->
                     </Grid.RowDefinitions>
-                    <DockPanel Grid.Row="0" VerticalAlignment="Center">
+                    <!--<DockPanel Grid.Row="0" VerticalAlignment="Center">
                         <Label Content="Order id:" Width="120"/>
                         <TextBox Text="{Binding Path=OrderId, Mode=TwoWay}" HorizontalContentAlignment="Right" IsReadOnly="True"/>
-                    </DockPanel>
-                    <DockPanel Grid.Row="1" VerticalAlignment="Center">
+                    </DockPanel>-->
+                    <DockPanel Grid.Row="0" VerticalAlignment="Center">
                         <Label Content="Card number:" Width="120"/>
                         <TextBox Text="{Binding Path=CardNumber, Mode=TwoWay}" HorizontalContentAlignment="Right"/>
                     </DockPanel>
-                    <DockPanel Grid.Row="2" VerticalAlignment="Center">
+                    <DockPanel Grid.Row="1" VerticalAlignment="Center">
                         <Label Content="Cardholder:" Width="120"/>
                         <TextBox Text="{Binding Path=CardHolder, Mode=TwoWay}" HorizontalContentAlignment="Right"/>
                     </DockPanel>
-                    <DockPanel Grid.Row="3" VerticalAlignment="Center">
+                    <DockPanel Grid.Row="2" VerticalAlignment="Center">
                         <Label Content="CVV:" Width="120"/>
                         <TextBox Text="{Binding Path=Cvv, Mode=TwoWay}" HorizontalContentAlignment="Right"/>
                     </DockPanel>
-                    <DockPanel Grid.Row="4" VerticalAlignment="Center">
+                    <DockPanel Grid.Row="3" VerticalAlignment="Center">
                         <Label Content="Expiry month:" Width="120"/>
                         <ComboBox MinWidth="150" Name="MonthCombo" SelectedItem="{Binding Path=ExpireDate, Mode=TwoWay, Converter={StaticResource MonthConverter}}"/>
                         <Label Content="Expiry year:" Width="80"/>
                         <ComboBox Name="YearCombo" SelectedItem="{Binding Path=ExpireDate, Mode=TwoWay, Converter={StaticResource YearConverter}, ConverterParameter=1}"/>
                     </DockPanel>
-                    <DockPanel Grid.Row="5" VerticalAlignment="Center">
-                        <Label Content="Amount:" Width="120"/>
-                        <TextBox Text="{Binding Path=Amount, Mode=TwoWay}" HorizontalContentAlignment="Right"/>
-                    </DockPanel>
-                    <DockPanel Grid.Row="6">
+                    <DockPanel Grid.Row="4">
                         <Button Name="SaveSettings_Button" Content="SaveSettings" MinWidth="50" Margin="5" Click="SaveSettings_Button_Click"/>
                     </DockPanel>
                 </Grid>
             </TabItem>
-            <TabItem Header="Status"></TabItem>
-            <TabItem Header="Refund"></TabItem>
         </TabControl>
-        <DockPanel Grid.Row="1" HorizontalAlignment="Right" Margin="5">
-            <Button Name="Ok_Button" Content="Ok" Margin="5" MinWidth="50" Click="Ok_Button_Click"/>
-            <Button Name="Cancel_Button" Content="Cancel" Margin="5" MinWidth="50"/>
+        <DockPanel Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5">
+            <!--<Button Name="Cancel_Button" Content="Cancel" Margin="5" MinWidth="50"/>-->
+            <!--<Border>-->
+                <TextBlock Name="MainTextBlock" TextAlignment="Center" Margin="5" Padding="5"/>
+            <!--</Border>-->
         </DockPanel>
     </Grid>
 </Window>

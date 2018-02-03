@@ -15,14 +15,24 @@ namespace BankingTestApp
     class Program
     {
         private static SemaphoreSlim Sem;
+        static string BaseUri = "http://localhost:7777";
+        static string[] prefixes = new string[]
+        {
+                    "/Refund/",
+                    "/PayIn/",
+                    "/GetStatus/"
+        };
         static void Main(string[] args)
         {
             Sem = new SemaphoreSlim(0);
             try
             {
-                string chars = "localhost:7777";
                 HttpListener listener = new HttpListener();
-                listener.Prefixes.Add("http://" + chars + "/");
+                foreach (var str in prefixes)
+                {
+
+                    listener.Prefixes.Add(BaseUri + str);
+                }
                 listener.Start();
                 while (listener.IsListening)
                 {
@@ -42,6 +52,8 @@ namespace BankingTestApp
 
         private static void AcceptCallback(IAsyncResult result)
         {
+            string stringOut = string.Empty;
+            JObject jObj;
             //HttpListenerContext context = listener.GetContext();
             HttpListener listener = (HttpListener)result.AsyncState;
             Sem.Release();
@@ -67,12 +79,26 @@ namespace BankingTestApp
                     while (readEl > 0);
                     //inData = reader.ReadToEnd();
                 }
-                JObject jObj = JObject.Parse(inDataB.ToString());
+                Console.WriteLine($"requested Url: {req.RawUrl}");
+                jObj = JObject.Parse(inDataB.ToString());
+
+                switch (req.RawUrl)
+                {
+                    case "/PayIn/":
+                        stringOut = $"{{\"Status\":\"Ok\", \"ErrorCode\":0, \"Sum\":{jObj["Amount"]}}}";
+                        break;
+                    case "/Refund/":
+                        stringOut = $"{{\"Status\":\"Ok\", \"ErrorCode\":0, \"OrderId\":{jObj["OrderId"]}}}";
+                        break;
+                    case "/GetStatus/":
+                        stringOut = $"{{\"Status\":\"Ok\", \"ErrorCode\":0, \"Status\":{jObj["OrderId"]}}}";
+                        break;
+                }
+
                 HttpListenerResponse resp = context.Response;
                 resp.ContentType = "application/json";
                 using (Stream str = resp.OutputStream)
                 {
-                    string stringOut = $"{{\"Status\":\"Ok\", \"ErrorCode\":0, \"Sum\":{jObj["Amount"]}}}";
                     byte[] bytes = Encoding.UTF8.GetBytes(stringOut);
                     str.Write(bytes, 0, bytes.Count());
                     //Console.Read();

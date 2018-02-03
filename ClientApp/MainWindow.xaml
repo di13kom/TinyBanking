@@ -17,9 +17,10 @@
             <RowDefinition Height="50"/>
         </Grid.RowDefinitions>
         <TabControl Grid.Row="0">
-            <TabItem Header="Pay">
+            <TabItem Header="Settings">
                 <Grid>
                     <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
                         <RowDefinition Height="*"/>
                         <RowDefinition Height="*"/>
                         <RowDefinition Height="*"/>
@@ -52,6 +53,9 @@
                     <DockPanel Grid.Row="5" VerticalAlignment="Center">
                         <Label Content="Amount:" Width="120"/>
                         <TextBox Text="{Binding Path=Amount, Mode=TwoWay}" HorizontalContentAlignment="Right"/>
+                    </DockPanel>
+                    <DockPanel Grid.Row="6">
+                        <Button Name="SaveSettings_Button" Content="SaveSettings" MinWidth="50" Margin="5" Click="SaveSettings_Button_Click"/>
                     </DockPanel>
                 </Grid>
             </TabItem>

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace ClientApp
 {
-    public class OrderObject : INotifyPropertyChanged
+    public class UserObject_Class : INotifyPropertyChanged
     {
         long _orderId;
         decimal _amount;

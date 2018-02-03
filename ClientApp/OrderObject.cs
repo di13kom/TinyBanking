@@ -115,4 +115,44 @@ namespace ClientApp
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(info));
         }
     }
+
+    public class StatusReflection : INotifyPropertyChanged
+    {
+        string _message;
+        bool _isWarningMessage;
+
+        public string Message
+        {
+            get
+            {
+                return _message;
+            }
+
+            set
+            {
+                _message = value;
+                NotifyPropertyChanged("Message");
+            }
+        }
+
+        public bool IsWarningMessage
+        {
+            get
+            {
+                return _isWarningMessage;
+            }
+
+            set
+            {
+                _isWarningMessage = value;
+                NotifyPropertyChanged("IsWarningMessage");
+            }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        private void NotifyPropertyChanged(string info)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(info));
+        }
+    }
 }

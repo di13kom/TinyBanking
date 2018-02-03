@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Data;
+using System.Windows.Media;
 
 namespace ClientApp
 {
@@ -39,6 +40,26 @@ namespace ClientApp
         {
             int retVal = (int)value;
             return (decimal)retVal / 10000;
+        }
+    }
+
+    public class ColorConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            SolidColorBrush retVal;
+            bool isWarning = (bool)value;
+            if (isWarning == true)
+                retVal = Brushes.Red;
+            else
+                retVal = Brushes.Green;
+
+            return retVal;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
         }
     }
 }

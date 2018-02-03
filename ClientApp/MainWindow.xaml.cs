@@ -24,6 +24,7 @@ namespace ClientApp
     public partial class MainWindow : Window
     {
         UserObject_Class BankingObject;
+        StatusReflection MessWithStatus = new StatusReflection();
         HttpClient NetworkClient;
         string SettingsFile = "Settings.json";
         public MainWindow()
@@ -35,6 +36,7 @@ namespace ClientApp
             BankingObject = LoadSettings();
 
             this.DataContext = BankingObject;
+            MainTextBlock.DataContext = MessWithStatus;
 
             NetworkClient = new HttpClient();
         }
@@ -65,12 +67,15 @@ namespace ClientApp
                 {
                     respString = await response.Content.ReadAsStringAsync();
                     //response.Dispose();
-                    MainTextBlock.Text = respString;
+                    MessWithStatus.Message = respString;
+                    MessWithStatus.IsWarningMessage = respString.Contains("\"Status\":\"Ok\"") == false;
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                //MessageBox.Show(ex.Message);
+                MessWithStatus.IsWarningMessage = true;
+                MessWithStatus.Message = ex.Message;
             }
         }
 
@@ -97,12 +102,16 @@ namespace ClientApp
                 {
                     string inFile = File.ReadAllText(SettingsFile);
                     retVal = JsonConvert.DeserializeObject<UserObject_Class>(inFile);
-                    MainTextBlock.Text = "Settings file's loaded";
+                    
+                    MessWithStatus.Message= "Settings file's been loaded";
+                    MessWithStatus.IsWarningMessage = false;
                 }
                 else
                 {
                     retVal = new UserObject_Class();
-                    MainTextBlock.Text = "Settings file is emtpy";
+
+                    MessWithStatus.Message = "Settings file is emtpy";
+                    MessWithStatus.IsWarningMessage = true;
                 }
             }
             catch (Exception ex)
@@ -118,11 +127,15 @@ namespace ClientApp
             {
                 string jsObj = JsonConvert.SerializeObject(BankingObject);
                 File.WriteAllText(SettingsFile, jsObj);
-                MainTextBlock.Text = "Settings file's saved";
+
+                MessWithStatus.Message = "Settings file's been saved";
+                MessWithStatus.IsWarningMessage = false;
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
+                MessWithStatus.Message = "Settings file saving error";
+                MessWithStatus.IsWarningMessage = true;
             }
         }
 

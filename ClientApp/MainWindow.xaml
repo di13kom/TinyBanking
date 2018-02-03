@@ -10,6 +10,7 @@
     <Window.Resources>
         <local:MonthConverter x:Key="MonthConverter" />
         <local:YearConverter x:Key="YearConverter" />
+        <local:ColorConverter x:Key="ColorConverter"/>
     </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -45,7 +46,7 @@
                     </Grid.RowDefinitions>
                     <DockPanel Grid.Row="1" VerticalAlignment="Center">
                         <Label Content="OrderId:" Width="120"/>
-                        <TextBox Text="{Binding Path=Amount, Mode=TwoWay}" HorizontalContentAlignment="Right"/>
+                        <TextBox Text="{Binding Path=OrderId, Mode=TwoWay}" HorizontalContentAlignment="Right"/>
                     </DockPanel>
                     <Separator Grid.Row="2" BorderThickness="2"/>
                     <DockPanel Grid.Row="3">
@@ -63,7 +64,7 @@
                     </Grid.RowDefinitions>
                     <DockPanel Grid.Row="1" VerticalAlignment="Center">
                         <Label Content="OrderId:" Width="120"/>
-                        <TextBox Text="{Binding Path=Amount, Mode=TwoWay}" HorizontalContentAlignment="Right"/>
+                        <TextBox Text="{Binding Path=OrderId, Mode=TwoWay}" HorizontalContentAlignment="Right"/>
                     </DockPanel>
                     <Separator Grid.Row="2" BorderThickness="2"/>
                     <DockPanel Grid.Row="3">
@@ -102,7 +103,7 @@
                         <Label Content="Expiry month:" Width="120"/>
                         <ComboBox MinWidth="150" Name="MonthCombo" SelectedItem="{Binding Path=ExpireDate, Mode=TwoWay, Converter={StaticResource MonthConverter}}"/>
                         <Label Content="Expiry year:" Width="80"/>
-                        <ComboBox Name="YearCombo" SelectedItem="{Binding Path=ExpireDate, Mode=TwoWay, Converter={StaticResource YearConverter}, ConverterParameter=1}"/>
+                        <ComboBox Name="YearCombo" SelectedItem="{Binding Path=ExpireDate, Mode=TwoWay, Converter={StaticResource YearConverter}}"/>
                     </DockPanel>
                     <DockPanel Grid.Row="4">
                         <Button Name="SaveSettings_Button" Content="SaveSettings" MinWidth="50" Margin="5" Click="SaveSettings_Button_Click"/>
@@ -113,7 +114,8 @@
         <DockPanel Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5">
             <!--<Button Name="Cancel_Button" Content="Cancel" Margin="5" MinWidth="50"/>-->
             <!--<Border>-->
-                <TextBlock Name="MainTextBlock" TextAlignment="Center" Margin="5" Padding="5"/>
+                <TextBlock Name="MainTextBlock" TextAlignment="Center" Margin="5" Padding="5" Text="{Binding Path=Message}"
+                           Foreground="{Binding Path=IsWarningMessage, Converter={StaticResource ColorConverter}, Mode=OneTime}"/>
             <!--</Border>-->
         </DockPanel>
     </Grid>

@@ -19,20 +19,24 @@ namespace BankingTestApp
                 HttpListener listener = new HttpListener();
                 listener.Prefixes.Add("http://" + chars + "/");
                 listener.Start();
-                HttpListenerContext context = listener.GetContext();
-                HttpListenerRequest req = context.Request;
-                if (req.ContentType.Contains("application/json") && req.HttpMethod == "POST")
+                while(listener.IsListening)
                 {
-                    HttpListenerResponse resp = context.Response;
-                    resp.ContentType = "application/json";
-                    using (Stream str = resp.OutputStream)
+                    HttpListenerContext context = listener.GetContext();
+                    Console.WriteLine($"incoming connection...");
+                    HttpListenerRequest req = context.Request;
+                    if (req.ContentType.Contains("application/json") && req.HttpMethod == "POST")
                     {
-                        string stringOut = "{\"GU\":25, \"GB\":35}";
-                        byte[] bytes = Encoding.UTF8.GetBytes(stringOut);
-                        str.Write(bytes, 0, bytes.Count());
-                        //Console.Read();
+                        HttpListenerResponse resp = context.Response;
+                        resp.ContentType = "application/json";
+                        using (Stream str = resp.OutputStream)
+                        {
+                            string stringOut = "{\"GU\":25, \"GB\":35}";
+                            byte[] bytes = Encoding.UTF8.GetBytes(stringOut);
+                            str.Write(bytes, 0, bytes.Count());
+                            //Console.Read();
+                        }
+                        //str.Close();
                     }
-                    //str.Close();
                 }
                 listener.Close();
             }

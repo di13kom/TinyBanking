@@ -67,15 +67,13 @@ namespace ClientApp
                 {
                     respString = await response.Content.ReadAsStringAsync();
                     //response.Dispose();
-                    MessWithStatus.Message = respString;
-                    MessWithStatus.IsWarningMessage = respString.Contains("\"Status\":\"Ok\"") == false;
+                    MessWithStatus.SetValues(respString, respString.Contains("\"Status\":\"Ok\"") == false);
                 }
             }
             catch (Exception ex)
             {
                 //MessageBox.Show(ex.Message);
-                MessWithStatus.IsWarningMessage = true;
-                MessWithStatus.Message = ex.Message;
+                MessWithStatus.SetValues(ex.Message, true);
             }
         }
 
@@ -102,16 +100,14 @@ namespace ClientApp
                 {
                     string inFile = File.ReadAllText(SettingsFile);
                     retVal = JsonConvert.DeserializeObject<UserObject_Class>(inFile);
-                    
-                    MessWithStatus.Message= "Settings file's been loaded";
-                    MessWithStatus.IsWarningMessage = false;
+
+                    MessWithStatus.SetValues("Settings file's been loaded", false);
                 }
                 else
                 {
                     retVal = new UserObject_Class();
 
-                    MessWithStatus.Message = "Settings file is emtpy";
-                    MessWithStatus.IsWarningMessage = true;
+                    MessWithStatus.SetValues("Settings file is emtpy", true);
                 }
             }
             catch (Exception ex)
@@ -128,14 +124,12 @@ namespace ClientApp
                 string jsObj = JsonConvert.SerializeObject(BankingObject);
                 File.WriteAllText(SettingsFile, jsObj);
 
-                MessWithStatus.Message = "Settings file's been saved";
-                MessWithStatus.IsWarningMessage = false;
+                MessWithStatus.SetValues("Settings file's been saved", false);
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
-                MessWithStatus.Message = "Settings file saving error";
-                MessWithStatus.IsWarningMessage = true;
+                MessWithStatus.SetValues("Settings file saving error", true);
             }
         }
 

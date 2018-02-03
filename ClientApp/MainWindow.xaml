@@ -115,7 +115,7 @@
             <!--<Button Name="Cancel_Button" Content="Cancel" Margin="5" MinWidth="50"/>-->
             <!--<Border>-->
                 <TextBlock Name="MainTextBlock" TextAlignment="Center" Margin="5" Padding="5" Text="{Binding Path=Message}"
-                           Foreground="{Binding Path=IsWarningMessage, Converter={StaticResource ColorConverter}, Mode=OneTime}"/>
+                           Foreground="{Binding Path=IsWarningMessage, Converter={StaticResource ColorConverter}, Mode=OneWay}"/>
             <!--</Border>-->
         </DockPanel>
     </Grid>

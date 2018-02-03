@@ -149,6 +149,12 @@ namespace ClientApp
             }
         }
 
+        public void SetValues(string inStr, bool inFlag)
+        {
+            Message = inStr;
+            IsWarningMessage = inFlag;
+        }
+
         public event PropertyChangedEventHandler PropertyChanged;
         private void NotifyPropertyChanged(string info)
         {

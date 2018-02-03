@@ -31,12 +31,46 @@
                     </DockPanel>
                     <Separator Grid.Row="2" BorderThickness="2"/>
                     <DockPanel Grid.Row="3">
-                        <Button Name="Ok_Button" Content="Ok" Margin="5" MinWidth="50" Click="Ok_Button_Click"/>
+                        <Button Name="Pay_Button" Content="Pay" Margin="5" MinWidth="50" Click="Ok_Button_Click"/>
                     </DockPanel>
                 </Grid>
             </TabItem>
-            <TabItem Header="Status"></TabItem>
-            <TabItem Header="Refund"></TabItem>
+            <TabItem Header="Status">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <DockPanel Grid.Row="1" VerticalAlignment="Center">
+                        <Label Content="OrderId:" Width="120"/>
+                        <TextBox Text="{Binding Path=Amount, Mode=TwoWay}" HorizontalContentAlignment="Right"/>
+                    </DockPanel>
+                    <Separator Grid.Row="2" BorderThickness="2"/>
+                    <DockPanel Grid.Row="3">
+                        <Button Name="GetStatus_Button" Content="Get Status" Margin="5" MinWidth="50" Click="Ok_Button_Click"/>
+                    </DockPanel>
+                </Grid>
+            </TabItem>
+            <TabItem Header="Refund">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <DockPanel Grid.Row="1" VerticalAlignment="Center">
+                        <Label Content="OrderId:" Width="120"/>
+                        <TextBox Text="{Binding Path=Amount, Mode=TwoWay}" HorizontalContentAlignment="Right"/>
+                    </DockPanel>
+                    <Separator Grid.Row="2" BorderThickness="2"/>
+                    <DockPanel Grid.Row="3">
+                        <Button Name="Refund_Button" Content="Get Status" Margin="5" MinWidth="50" Click="Ok_Button_Click"/>
+                    </DockPanel>
+                </Grid>
+            </TabItem>
             <TabItem Header="Settings">
                 <Grid>
                     <Grid.RowDefinitions>

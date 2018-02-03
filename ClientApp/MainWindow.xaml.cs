@@ -42,9 +42,26 @@ namespace ClientApp
         private async void Ok_Button_Click(object sender, RoutedEventArgs e)
         {
             string respString;
+            string btnName = ((Button)sender).Name;
+            string baseUrl = "http://localhost:7777";
+            string uri = string.Empty;
+            string url;
+            if (btnName == Pay_Button.Name)
+            {
+                uri = "/PayIn/";
+            }
+            else if (btnName == Refund_Button.Name)
+            {
+                uri = "/Refund/";
+            }
+            else if (btnName == GetStatus_Button.Name)
+            {
+                uri = "/GetStatus/";
+            }
             try
             {
-                using (HttpResponseMessage response = await SendAsync())
+                url = baseUrl + uri;
+                using (HttpResponseMessage response = await SendAsync(url))
                 {
                     respString = await response.Content.ReadAsStringAsync();
                     //response.Dispose();
@@ -57,7 +74,7 @@ namespace ClientApp
             }
         }
 
-        async Task<HttpResponseMessage> SendAsync()
+        async Task<HttpResponseMessage> SendAsync(string inUrl)
         {
             StringContent strCont;
             string jsonObj = JsonConvert.SerializeObject(BankingObject);
@@ -67,7 +84,7 @@ namespace ClientApp
                 //strCont.Headers.Add("Allow", "Application/json");
                 //strCont.Headers.Add("Content-type", "Aplication/json");
                 strCont.Headers.Add("Content-Length", jsonObj.Length.ToString());
-                return await NetworkClient.PostAsync("http://localhost:7777/", strCont);
+                return await NetworkClient.PostAsync(inUrl, strCont);
             }
         }
 

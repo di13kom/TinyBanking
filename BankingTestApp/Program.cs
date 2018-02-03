@@ -18,8 +18,8 @@ namespace BankingTestApp
         static string BaseUri = "http://localhost:7777";
         static string[] prefixes = new string[]
         {
-                    "/Refund/",
                     "/PayIn/",
+                    "/Refund/",
                     "/GetStatus/"
         };
         static void Main(string[] args)
@@ -82,18 +82,14 @@ namespace BankingTestApp
                 Console.WriteLine($"requested Url: {req.RawUrl}");
                 jObj = JObject.Parse(inDataB.ToString());
 
-                switch (req.RawUrl)
-                {
-                    case "/PayIn/":
-                        stringOut = $"{{\"Status\":\"Ok\", \"ErrorCode\":0, \"Sum\":{jObj["Amount"]}}}";
-                        break;
-                    case "/Refund/":
-                        stringOut = $"{{\"Status\":\"Ok\", \"ErrorCode\":0, \"OrderId\":{jObj["OrderId"]}}}";
-                        break;
-                    case "/GetStatus/":
-                        stringOut = $"{{\"Status\":\"Ok\", \"ErrorCode\":0, \"Status\":{jObj["OrderId"]}}}";
-                        break;
-                }
+                string reqUrl = req.RawUrl;
+
+                if (reqUrl == prefixes[0])// "/PayIn/":
+                    stringOut = $"{{\"Status\":\"Ok\", \"ErrorCode\":0, \"Sum\":{jObj["Amount"]}}}";
+                else if (reqUrl == prefixes[1])// "/Refund/":
+                    stringOut = $"{{\"Status\":\"Ok\", \"ErrorCode\":0, \"OrderId\":{jObj["OrderId"]}}}";
+                else if (reqUrl == prefixes[2])// "/GetStatus/":
+                    stringOut = $"{{\"Status\":\"Ok\", \"ErrorCode\":0, \"Status\":{jObj["OrderId"]}}}";
 
                 HttpListenerResponse resp = context.Response;
                 resp.ContentType = "application/json";

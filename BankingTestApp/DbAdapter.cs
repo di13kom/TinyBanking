@@ -34,7 +34,7 @@ namespace BankingTestApp
 
         public int GetPaymentStatus(double id)
         {
-            int retVal = int.MinValue;
+            int retVal = -1;
             SQLiteCommand sc = null;
             SQLiteDataReader reader = null;
             try
@@ -43,7 +43,7 @@ namespace BankingTestApp
                     con.Open();
 
                 sc = con.CreateCommand();
-                sc.CommandText = $"SELECT * FROM { ConstVar.DbOperationTable} where Id={id}";
+                sc.CommandText = $"SELECT * FROM { ConstVar.DbOperationTable} where SubjectId={id}";
                 reader = sc.ExecuteReader();
 
                 if (reader.Read() == true)
@@ -51,7 +51,7 @@ namespace BankingTestApp
                     retVal = int.Parse(reader["IsRefunded"].ToString());
                 }
                 else
-                    retVal = -1;//payment not exist
+                    retVal = 6;//payment not exist
             }
             catch (SQLiteException sqlEx)
             {
@@ -74,7 +74,7 @@ namespace BankingTestApp
 
         public int RefundPayment(double id)
         {
-            int retVal = int.MinValue;
+            int retVal = -1;
             SQLiteCommand sc = null;
             SQLiteDataReader reader = null;
             try
@@ -83,7 +83,7 @@ namespace BankingTestApp
                     con.Open();
 
                 sc = con.CreateCommand();
-                sc.CommandText = $"SELECT * FROM { ConstVar.DbOperationTable} where Id={id}";
+                sc.CommandText = $"SELECT * FROM { ConstVar.DbOperationTable} where SubjectId={id}";
                 reader = sc.ExecuteReader();
 
                 if (reader.Read() == true)
@@ -91,14 +91,14 @@ namespace BankingTestApp
                     double amount = double.Parse(reader["Amount"].ToString());
                     double cardNum = double.Parse(reader["CardId"].ToString());
                     
-                    sc.CommandText = $"UPDATE {ConstVar.DbOperationTable} SET IsRefunded=1 WHERE Id={id}";
+                    sc.CommandText = $"UPDATE {ConstVar.DbOperationTable} SET IsRefunded=1 WHERE SubjectId={id}";
                     sc.ExecuteNonQuery();
                     //refund amount to deposit
                     sc.CommandText = $"UPDATE {ConstVar.DbDepositCardsTable} SET Amount=Amount+{amount} WHERE Id={cardNum}";
                     sc.ExecuteNonQuery();
                 }
                 else
-                    retVal = -1;//payment not exist
+                    retVal = 6;//payment not exist
             }
             catch (SQLiteException sqlEx)
             {

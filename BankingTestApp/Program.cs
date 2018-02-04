@@ -85,18 +85,24 @@ namespace BankingTestApp
                 string reqUrl = req.RawUrl;
 
                 if (reqUrl == ConstVar.Prefixes[0])// "/PayIn/":
-                    stringOut = $"{{\"Status\":\"Ok\", \"ErrorCode\":0, \"Sum\":{jObj["Amount"]}}}";
+                    stringOut = $"{{\"Status\":\"Ok\", \"Sum\":{jObj["Amount"]}}}";
                 else if (reqUrl == ConstVar.Prefixes[1])// "/Refund/":
                 {
                     double idVal = double.Parse(jObj["OrderId"].ToString());
                     int val = DBClass.RefundPayment(idVal);
-                    stringOut = $"{{\"Status\":\"Ok\", \"ErrorCode\":0, \"Status\":{val}}}";
+                    if (val == 0)
+                        stringOut = $"{{\"Status\":\"Ok\", \"Value\":{val}}}";
+                    else
+                        stringOut = $"{{\"Status\":\"Error\", \"Value\":{val}}}";
                 }
                 else if (reqUrl == ConstVar.Prefixes[2])// "/GetStatus/":
                 {
                     double idVal = double.Parse(jObj["OrderId"].ToString());
                     int val = DBClass.GetPaymentStatus(idVal);
-                    stringOut = $"{{\"Status\":\"Ok\", \"ErrorCode\":0, \"Status\":{val}}}";
+                    if (val == 0)
+                        stringOut = $"{{\"Status\":\"Ok\", \"Value\":{val}}}";
+                    else
+                        stringOut = $"{{\"Status\":\"Error\", \"Value\":{val}}}";
                 }
 
                 HttpListenerResponse resp = context.Response;

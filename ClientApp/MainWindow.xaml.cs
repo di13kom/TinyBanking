@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -26,7 +27,7 @@ namespace ClientApp
         UserObject_Class BankingObject;
         StatusReflection MessWithStatus = new StatusReflection();
         HttpClient NetworkClient;
-        string SettingsFile = "Settings.json";
+
         public MainWindow()
         {
             InitializeComponent();
@@ -43,22 +44,24 @@ namespace ClientApp
 
         private async void Ok_Button_Click(object sender, RoutedEventArgs e)
         {
+            int respValueInt;
             string respString;
+            JObject jObj;
             string btnName = ((Button)sender).Name;
-            string baseUrl = "http://localhost:7777";
+            string baseUrl = ConstVar.BaseUri;
             string uri = string.Empty;
             string url;
             if (btnName == Pay_Button.Name)
             {
-                uri = "/PayIn/";
+                uri = ConstVar.Prefixes[0];//"/PayIn/";
             }
             else if (btnName == Refund_Button.Name)
             {
-                uri = "/Refund/";
+                uri = ConstVar.Prefixes[1];//"/Refund/";
             }
             else if (btnName == GetStatus_Button.Name)
             {
-                uri = "/GetStatus/";
+                uri = ConstVar.Prefixes[2];//"/GetStatus/";
             }
             try
             {
@@ -66,8 +69,9 @@ namespace ClientApp
                 using (HttpResponseMessage response = await SendAsync(url))
                 {
                     respString = await response.Content.ReadAsStringAsync();
-                    //response.Dispose();
-                    MessWithStatus.SetValues(respString, respString.Contains("\"Status\":\"Ok\"") == false);
+                    jObj = JObject.Parse(respString);
+                    respValueInt = int.Parse(jObj["Value"].ToString());//Convert
+                    MessWithStatus.SetValues(ConstVar.ErrorDesc[respValueInt], jObj["Status"].ToString() == "Error");
                 }
             }
             catch (Exception ex)
@@ -82,7 +86,7 @@ namespace ClientApp
             StringContent strCont;
             string jsonObj = JsonConvert.SerializeObject(BankingObject);
 
-            using (strCont = new StringContent(jsonObj, Encoding.UTF8, "application/json"))
+            using (strCont = new StringContent(jsonObj, Encoding.UTF8, ConstVar.JsonMIME))
             {
                 //strCont.Headers.Add("Allow", "Application/json");
                 //strCont.Headers.Add("Content-type", "Aplication/json");
@@ -96,9 +100,9 @@ namespace ClientApp
             UserObject_Class retVal = null;
             try
             {
-                if (File.Exists(SettingsFile))
+                if (File.Exists(ConstVar.SettingsFile))
                 {
-                    string inFile = File.ReadAllText(SettingsFile);
+                    string inFile = File.ReadAllText(ConstVar.SettingsFile);
                     retVal = JsonConvert.DeserializeObject<UserObject_Class>(inFile);
 
                     MessWithStatus.SetValues("Settings file's been loaded", false);
@@ -122,7 +126,7 @@ namespace ClientApp
             try
             {
                 string jsObj = JsonConvert.SerializeObject(BankingObject);
-                File.WriteAllText(SettingsFile, jsObj);
+                File.WriteAllText(ConstVar.SettingsFile, jsObj);
 
                 MessWithStatus.SetValues("Settings file's been saved", false);
             }

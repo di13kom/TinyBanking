@@ -10,13 +10,13 @@ namespace ClientApp
     public class UserObject_Class : INotifyPropertyChanged
     {
         long _orderId;
-        decimal _amount;
+        Int64 _amount;
         double _cardNumber;
         decimal _expireDate;
         short _cvv;
         string _cardholder;
 
-        public decimal Amount
+        public Int64 Amount
         {
             get
             {
@@ -25,7 +25,10 @@ namespace ClientApp
 
             set
             {
-                _amount = value;
+                if (value > 0)
+                    _amount = value;
+                else
+                    _amount = 0;
                 NotifyPropertyChanged("Amount");
             }
         }
@@ -39,7 +42,10 @@ namespace ClientApp
 
             set
             {
-                _cardNumber = value;
+                if (value > 0)
+                    _cardNumber = value;
+                else
+                    _cardNumber = 0;
                 NotifyPropertyChanged("CardNumber");
             }
         }
@@ -76,7 +82,10 @@ namespace ClientApp
 
             set
             {
-                _cvv = value;
+                if (value > 0)
+                    _cvv = value;
+                else
+                    _cvv = 0;
                 NotifyPropertyChanged("Cvv");
             }
         }
@@ -104,7 +113,10 @@ namespace ClientApp
 
             set
             {
-                _orderId = value;
+                if (value > 0)
+                    _orderId = value;
+                else
+                    _orderId = 0;
                 NotifyPropertyChanged("OrderId");
             }
         }

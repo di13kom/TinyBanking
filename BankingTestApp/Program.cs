@@ -17,14 +17,15 @@ namespace BankingTestApp
     class Program
     {
         private static SemaphoreSlim Sem;
-        
+        private static DbAdapter_Class DBClass;
+
         static void Main(string[] args)
         {
             Sem = new SemaphoreSlim(0);
+            DBClass = new DbAdapter_Class();
             try
             {
-                DbAdapter_Class dbClas = new DbAdapter_Class();
-                dbClas.test();
+                //DBClass.test();
 
                 HttpListener listener = new HttpListener();
                 foreach (var str in ConstVar.Prefixes)
@@ -86,9 +87,17 @@ namespace BankingTestApp
                 if (reqUrl == ConstVar.Prefixes[0])// "/PayIn/":
                     stringOut = $"{{\"Status\":\"Ok\", \"ErrorCode\":0, \"Sum\":{jObj["Amount"]}}}";
                 else if (reqUrl == ConstVar.Prefixes[1])// "/Refund/":
-                    stringOut = $"{{\"Status\":\"Ok\", \"ErrorCode\":0, \"OrderId\":{jObj["OrderId"]}}}";
+                {
+                    double idVal = double.Parse(jObj["OrderId"].ToString());
+                    int val = DBClass.RefundPayment(idVal);
+                    stringOut = $"{{\"Status\":\"Ok\", \"ErrorCode\":0, \"Status\":{val}}}";
+                }
                 else if (reqUrl == ConstVar.Prefixes[2])// "/GetStatus/":
-                    stringOut = $"{{\"Status\":\"Ok\", \"ErrorCode\":0, \"Status\":{jObj["OrderId"]}}}";
+                {
+                    double idVal = double.Parse(jObj["OrderId"].ToString());
+                    int val = DBClass.GetPaymentStatus(idVal);
+                    stringOut = $"{{\"Status\":\"Ok\", \"ErrorCode\":0, \"Status\":{val}}}";
+                }
 
                 HttpListenerResponse resp = context.Response;
                 resp.ContentType = ConstVar.JsonMIME;

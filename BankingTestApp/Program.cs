@@ -2,6 +2,8 @@
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
+using System.Data.SQLite;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -15,23 +17,20 @@ namespace BankingTestApp
     class Program
     {
         private static SemaphoreSlim Sem;
-        static string BaseUri = "http://localhost:7777";
-        static string[] prefixes = new string[]
-        {
-                    "/PayIn/",
-                    "/Refund/",
-                    "/GetStatus/"
-        };
+        
         static void Main(string[] args)
         {
             Sem = new SemaphoreSlim(0);
             try
             {
+                DbAdapter_Class dbClas = new DbAdapter_Class();
+                dbClas.test();
+
                 HttpListener listener = new HttpListener();
-                foreach (var str in prefixes)
+                foreach (var str in ConstVar.Prefixes)
                 {
 
-                    listener.Prefixes.Add(BaseUri + str);
+                    listener.Prefixes.Add(ConstVar.BaseUri + str);
                 }
                 listener.Start();
                 while (listener.IsListening)
@@ -61,7 +60,7 @@ namespace BankingTestApp
 
             HttpListenerRequest req = context.Request;
             Console.WriteLine($"incoming connection from: {req.RemoteEndPoint.Address.ToString()}");
-            if (req.ContentType.Contains("application/json") && req.HttpMethod == "POST")
+            if (req.ContentType.Contains(ConstVar.JsonMIME) && req.HttpMethod == "POST")
             {
                 //string inData;
                 StringBuilder inDataB = new StringBuilder();
@@ -84,15 +83,15 @@ namespace BankingTestApp
 
                 string reqUrl = req.RawUrl;
 
-                if (reqUrl == prefixes[0])// "/PayIn/":
+                if (reqUrl == ConstVar.Prefixes[0])// "/PayIn/":
                     stringOut = $"{{\"Status\":\"Ok\", \"ErrorCode\":0, \"Sum\":{jObj["Amount"]}}}";
-                else if (reqUrl == prefixes[1])// "/Refund/":
+                else if (reqUrl == ConstVar.Prefixes[1])// "/Refund/":
                     stringOut = $"{{\"Status\":\"Ok\", \"ErrorCode\":0, \"OrderId\":{jObj["OrderId"]}}}";
-                else if (reqUrl == prefixes[2])// "/GetStatus/":
+                else if (reqUrl == ConstVar.Prefixes[2])// "/GetStatus/":
                     stringOut = $"{{\"Status\":\"Ok\", \"ErrorCode\":0, \"Status\":{jObj["OrderId"]}}}";
 
                 HttpListenerResponse resp = context.Response;
-                resp.ContentType = "application/json";
+                resp.ContentType = ConstVar.JsonMIME;
                 using (Stream str = resp.OutputStream)
                 {
                     byte[] bytes = Encoding.UTF8.GetBytes(stringOut);

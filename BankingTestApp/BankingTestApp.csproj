@@ -71,14 +71,16 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ClientApp.cs" />
+    <Compile Include="ConstVar.cs" />
+    <Compile Include="DbAdapter.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-    <Content Include="BankDB.db">
+    <None Include="BankDB.db">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+    </None>
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

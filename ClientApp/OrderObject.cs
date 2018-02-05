@@ -7,116 +7,64 @@ using System.Threading.Tasks;
 
 namespace ClientApp
 {
-    public class UserObject_Class : INotifyPropertyChanged
+    public class UserObject_Class : BankObject, INotifyPropertyChanged
     {
-        long _orderId;
-        Int64 _amount;
-        double _cardNumber;
-        decimal _expireDate;
-        short _cvv;
-        string _cardholder;
-
-        public Int64 Amount
+        override public Int64 Amount
         {
-            get
-            {
-                return _amount;
-            }
-
+            get { return base.Amount; }
             set
             {
-                if (value > 0)
-                    _amount = value;
-                else
-                    _amount = 0;
+                base.Amount = value;
                 NotifyPropertyChanged("Amount");
             }
         }
 
-        public double CardNumber
+        override public double CardNumber
         {
-            get
-            {
-                return _cardNumber;
-            }
-
+            get { return base.CardNumber; }
             set
             {
-                if (value > 0)
-                    _cardNumber = value;
-                else
-                    _cardNumber = 0;
+                base.CardNumber = value;
                 NotifyPropertyChanged("CardNumber");
             }
         }
 
-        public decimal ExpireDate
+        override public decimal ExpireDate
         {
-            get
-            {
-                return _expireDate;
-            }
-
+            get { return base.ExpireDate; }
             set
             {
-                if (_expireDate == 0)
-                    _expireDate = value;
-                else
-                {
-                    if (value > 1)
-                        _expireDate = (_expireDate - Math.Truncate(_expireDate)) + value;
-                    else
-                        _expireDate = Math.Truncate(_expireDate) + value;
-                }
-
+                base.ExpireDate = value;
                 NotifyPropertyChanged("ExpireDate");
             }
         }
 
-        public short Cvv
+        override public short Cvv
         {
-            get
-            {
-                return _cvv;
-            }
-
+            get { return base.Cvv; }
             set
             {
-                if (value > 0)
-                    _cvv = value;
-                else
-                    _cvv = 0;
+                base.Cvv = value;
                 NotifyPropertyChanged("Cvv");
             }
         }
 
-        public string CardHolder
+        override public string CardHolder
         {
-            get
-            {
-                return _cardholder;
-            }
-
+            get { return base.CardHolder; }
             set
             {
-                _cardholder = value;
+                base.CardHolder = value;
                 NotifyPropertyChanged("CardHolder");
             }
         }
 
-        public long OrderId
+        override public long OrderId
         {
-            get
-            {
-                return _orderId;
-            }
-
+            get { return base.OrderId; }
             set
             {
-                if (value > 0)
-                    _orderId = value;
-                else
-                    _orderId = 0;
+                base.OrderId = value;
                 NotifyPropertyChanged("OrderId");
             }
         }

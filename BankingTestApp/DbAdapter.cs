@@ -90,7 +90,7 @@ namespace BankingTestApp
                 {
                     double amount = double.Parse(reader["Amount"].ToString());
                     double cardNum = double.Parse(reader["CardId"].ToString());
-                    
+
                     sc.CommandText = $"UPDATE {ConstVar.DbOperationTable} SET IsRefunded=1 WHERE SubjectId={id}";
                     sc.ExecuteNonQuery();
                     //refund amount to deposit
@@ -116,6 +116,66 @@ namespace BankingTestApp
                     sc.Dispose();
             }
 
+            return retVal;
+        }
+
+        public int PayIn(double subjectId, double cardNumber, decimal expireDate, short cvv, string cardHolder, long amount)
+        {
+            int retVal = -1;
+
+            SQLiteCommand sc = null;
+            SQLiteDataReader reader = null;
+            try
+            {
+                if (con.State != System.Data.ConnectionState.Open)
+                    con.Open();
+
+                sc = con.CreateCommand();
+                sc.CommandText = $"SELECT dpst.Amount FROM { ConstVar.DbCustomersTable} cst JOIN {ConstVar.DbDepositCardsTable} dpst "
+                    + $"ON dpst.CardHolder=cst.Id WHERE dpst.CardNumber={cardNumber} AND dpst.ExpireDate={expireDate} "
+                    + $"AND dpst.CVV={cvv} AND cst.SecondName||' '||cst.FirstName='{cardHolder}';";
+                //reader = sc.ExecuteReader();
+                object obj = sc.ExecuteScalar();
+                //if (reader.Read() == true)
+                if (obj != null)
+                {
+                    long dbAmount = long.Parse(obj.ToString());
+                    if (dbAmount - amount > 0)
+                    {
+                        sc.CommandText = $"SELECT CASE WHEN CAST(STRFTIME('%m.%Y','now')AS DECIMAL)<{expireDate} THEN 1 ELSE 0 END " +
+                            $"FROM {ConstVar.DbDepositCardsTable} WHERE CardNumber={cardNumber}";
+                        if (int.Parse(sc.ExecuteScalar().ToString()) == 1)
+                        {
+                            sc.CommandText = $"INSERT INTO {ConstVar.DbOperationTable} (CardId, Amount, SubjectId) "
+                                + $"SELECT Id, {amount}, {subjectId} FROM {ConstVar.DbDepositCardsTable} "
+                                + $"WHERE CardNumber={cardNumber};";
+                            if (sc.ExecuteNonQuery() == 1)
+                                retVal = 0;
+                        }
+                        else
+                            retVal = 30;//Exipre Card
+                    }
+                    else
+                        retVal = 20;//Insufficient balance
+                }
+                else
+                    retVal = 10;//Wrong UserData
+            }
+            catch (SQLiteException sqlEx)
+            {
+                Console.WriteLine($"Sqlite error in GetPaymentStatus: {sqlEx.Message}");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Common error in GetPaymentStatus: {ex.Message}");
+            }
+            finally
+            {
+                if (reader != null)
+                    reader.Close();
+                if (sc != null)
+                    sc.Dispose();
+            }
             return retVal;
         }
     }

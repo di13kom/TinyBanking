@@ -84,11 +84,24 @@ namespace BankingTestApp
 
                 string reqUrl = req.RawUrl;
 
+                double idVal = double.Parse(jObj["OrderId"].ToString());
                 if (reqUrl == ConstVar.Prefixes[0])// "/PayIn/":
-                    stringOut = $"{{\"Status\":\"Ok\", \"Sum\":{jObj["Amount"]}}}";
+                                                   //stringOut = $"{{\"Status\":\"Ok\", \"Sum\":{jObj["Amount"]}}}";
+                {
+                    double cardNum = double.Parse(jObj["CardNumber"].ToString());
+                    decimal expDate = decimal.Parse(jObj["ExpireDate"].ToString());
+                    short cvv = short.Parse(jObj["Cvv"].ToString());
+                    string cardHolder = jObj["CardHolder"].ToString();
+                    long amount = long.Parse(jObj["Amount"].ToString());
+
+                    int val = DBClass.PayIn(idVal, cardNum, expDate, cvv, cardHolder, amount);
+                    if (val == 0)
+                        stringOut = $"{{\"Status\":\"Ok\", \"Value\":{val}}}";
+                    else
+                        stringOut = $"{{\"Status\":\"Error\", \"Value\":{val}}}";
+                }
                 else if (reqUrl == ConstVar.Prefixes[1])// "/Refund/":
                 {
-                    double idVal = double.Parse(jObj["OrderId"].ToString());
                     int val = DBClass.RefundPayment(idVal);
                     if (val == 0)
                         stringOut = $"{{\"Status\":\"Ok\", \"Value\":{val}}}";
@@ -97,7 +110,6 @@ namespace BankingTestApp
                 }
                 else if (reqUrl == ConstVar.Prefixes[2])// "/GetStatus/":
                 {
-                    double idVal = double.Parse(jObj["OrderId"].ToString());
                     int val = DBClass.GetPaymentStatus(idVal);
                     if (val == 0)
                         stringOut = $"{{\"Status\":\"Ok\", \"Value\":{val}}}";

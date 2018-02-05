@@ -26,7 +26,7 @@ namespace ClientApp
             { 1,    "Payment Refunded" },
             { 6,    "Wrong OrderId" },
             { 10,   "Wrong User Data" },
-            { 20,   "Insufficient amount" },
+            { 20,   "Insufficient balance" },
             { 30,   "Card is expired" },
 
         };

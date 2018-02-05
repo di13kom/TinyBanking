@@ -34,7 +34,7 @@ namespace BankingTestApp
 
         public int GetPaymentStatus(double id)
         {
-            int retVal = -1;
+            int retVal = (int)ErrorCodes.UnknownError;
             SQLiteCommand sc = null;
             SQLiteDataReader reader = null;
             try
@@ -51,7 +51,7 @@ namespace BankingTestApp
                     retVal = int.Parse(reader["IsRefunded"].ToString());
                 }
                 else
-                    retVal = 6;//payment not exist
+                    retVal = (int)ErrorCodes.WrongOrderId;//6 payment not exist
             }
             catch (SQLiteException sqlEx)
             {
@@ -74,7 +74,7 @@ namespace BankingTestApp
 
         public int RefundPayment(double id)
         {
-            int retVal = -1;
+            int retVal = (int)ErrorCodes.UnknownError;
             SQLiteCommand sc = null;
             SQLiteDataReader reader = null;
             try
@@ -98,7 +98,7 @@ namespace BankingTestApp
                     sc.ExecuteNonQuery();
                 }
                 else
-                    retVal = 6;//payment not exist
+                    retVal = (int)ErrorCodes.WrongOrderId;//6 payment not exist
             }
             catch (SQLiteException sqlEx)
             {
@@ -121,7 +121,7 @@ namespace BankingTestApp
 
         public int PayIn(double subjectId, double cardNumber, decimal expireDate, short cvv, string cardHolder, long amount)
         {
-            int retVal = -1;
+            int retVal = (int)ErrorCodes.UnknownError;
 
             SQLiteCommand sc = null;
             SQLiteDataReader reader = null;
@@ -150,16 +150,16 @@ namespace BankingTestApp
                                 + $"SELECT Id, {amount}, {subjectId} FROM {ConstVar.DbDepositCardsTable} "
                                 + $"WHERE CardNumber={cardNumber};";
                             if (sc.ExecuteNonQuery() == 1)
-                                retVal = 0;
+                                retVal = (int)ErrorCodes.OperationSuccess;
                         }
                         else
-                            retVal = 30;//Exipre Card
+                            retVal = (int)ErrorCodes.Cardisexpired;//30 Exipre Card
                     }
                     else
-                        retVal = 20;//Insufficient balance
+                        retVal = (int)ErrorCodes.Insufficientbalance;//20 Insufficient balance
                 }
                 else
-                    retVal = 10;//Wrong UserData
+                    retVal = (int)ErrorCodes.WrongUserData;//10 Wrong UserData
             }
             catch (SQLiteException sqlEx)
             {

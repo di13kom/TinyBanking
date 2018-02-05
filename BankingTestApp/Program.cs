@@ -52,6 +52,7 @@ namespace BankingTestApp
 
         private static void AcceptCallback(IAsyncResult result)
         {
+            int val = (int)ErrorCodes.UnknownError;
             string stringOut = string.Empty;
             JObject jObj;
             //HttpListenerContext context = listener.GetContext();
@@ -94,28 +95,20 @@ namespace BankingTestApp
                     string cardHolder = jObj["CardHolder"].ToString();
                     long amount = long.Parse(jObj["Amount"].ToString());
 
-                    int val = DBClass.PayIn(idVal, cardNum, expDate, cvv, cardHolder, amount);
-                    if (val == 0)
-                        stringOut = $"{{\"Status\":\"Ok\", \"Value\":{val}}}";
-                    else
-                        stringOut = $"{{\"Status\":\"Error\", \"Value\":{val}}}";
+                    val = DBClass.PayIn(idVal, cardNum, expDate, cvv, cardHolder, amount);
                 }
                 else if (reqUrl == ConstVar.Prefixes[1])// "/Refund/":
                 {
-                    int val = DBClass.RefundPayment(idVal);
-                    if (val == 0)
-                        stringOut = $"{{\"Status\":\"Ok\", \"Value\":{val}}}";
-                    else
-                        stringOut = $"{{\"Status\":\"Error\", \"Value\":{val}}}";
+                    val = DBClass.RefundPayment(idVal);
                 }
                 else if (reqUrl == ConstVar.Prefixes[2])// "/GetStatus/":
                 {
-                    int val = DBClass.GetPaymentStatus(idVal);
-                    if (val == 0)
+                    val = DBClass.GetPaymentStatus(idVal);
+                }
+                    if (val == (int)ErrorCodes.OperationSuccess)
                         stringOut = $"{{\"Status\":\"Ok\", \"Value\":{val}}}";
                     else
                         stringOut = $"{{\"Status\":\"Error\", \"Value\":{val}}}";
-                }
 
                 HttpListenerResponse resp = context.Response;
                 resp.ContentType = ConstVar.JsonMIME;

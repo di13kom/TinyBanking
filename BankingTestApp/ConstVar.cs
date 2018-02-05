@@ -6,6 +6,17 @@ using System.Threading.Tasks;
 
 namespace BankingTestApp
 {
+    public enum ErrorCodes
+    {
+        UnknownError = -1,
+        OperationSuccess = 0,
+        PaymentRefunded = 1,
+        WrongOrderId = 6,
+        WrongUserData = 10,
+        Insufficientbalance = 20,
+        Cardisexpired = 30
+    };
+
     public static class ConstVar
     {
         public static string BaseUri = "http://localhost:7777";

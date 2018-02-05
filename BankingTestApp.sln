@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BankingTestApp", "BankingTe
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClientApp", "ClientApp\ClientApp.csproj", "{212A3E9A-56B4-4B32-BC8C-D0FA6F5D3970}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommonLib", "CommonLib\CommonLib.csproj", "{94CDD044-9BB4-4695-BAEE-D679980B63F0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{212A3E9A-56B4-4B32-BC8C-D0FA6F5D3970}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{212A3E9A-56B4-4B32-BC8C-D0FA6F5D3970}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{212A3E9A-56B4-4B32-BC8C-D0FA6F5D3970}.Release|Any CPU.Build.0 = Release|Any CPU
+		{94CDD044-9BB4-4695-BAEE-D679980B63F0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{94CDD044-9BB4-4695-BAEE-D679980B63F0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{94CDD044-9BB4-4695-BAEE-D679980B63F0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{94CDD044-9BB4-4695-BAEE-D679980B63F0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

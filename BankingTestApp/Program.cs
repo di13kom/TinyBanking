@@ -1,7 +1,9 @@
-﻿using Newtonsoft.Json;
+﻿using CommonLib;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Data.SqlClient;
 using System.Data.SQLite;
 using System.IO;
@@ -17,12 +19,17 @@ namespace BankingTestApp
     class Program
     {
         private static SemaphoreSlim Sem;
-        private static DbAdapter_Class DBClass;
+        private static IDbClass DBClass;
+        //private static DataBaseContext DbContext;
 
         static void Main(string[] args)
         {
             Sem = new SemaphoreSlim(0);
-            DBClass = new DbAdapter_Class();
+            //DBClass = new DbAdapter_Class();
+
+            DBClass = new DataBaseContext();
+            
+
             try
             {
                 //DBClass.test();

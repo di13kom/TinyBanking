@@ -1,5 +1,7 @@
-﻿using System;
+﻿using CommonLib;
+using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Data.SQLite;
 using System.Linq;
 using System.Text;
@@ -7,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace BankingTestApp
 {
-    public class DbAdapter_Class
+    public class DbAdapter_Class : IDbClass
     {
         SQLiteConnection con = new SQLiteConnection(@"Data Source=" + ConstVar.DbName + "; Version=3;");
 
@@ -189,6 +191,95 @@ namespace BankingTestApp
                 if (sc != null)
                     sc.Dispose();
             }
+            return retVal;
+        }
+    }
+
+    public class DataBaseContext : DbContext, IDbClass
+    {
+        public DbSet<Customers> Customers { get; set; }
+        public DbSet<Cards_Deposit> Deposit { get; set; }
+        public DbSet<Cards_Operations> Operation { get; set; }
+        public DataBaseContext() : base("DefaultConnection")
+        {
+            Customers.Load();
+            Deposit.Load();
+            Operation.Load();
+        }
+
+        public int GetPaymentStatus(double id)
+        {
+            int retVal = (int)ErrorCodes.UnknownError;
+            var Val = Operation.FirstOrDefault(x => x.SubjectId == id);
+            if (Val != null)
+                retVal = Val.IsRefunded;
+            else
+                retVal = (int)ErrorCodes.WrongOrderId;
+            return retVal;
+        }
+
+        public int RefundPayment(double id)
+        {
+            int retVal = (int)ErrorCodes.UnknownError;
+
+            var Val = Operation.FirstOrDefault(x => x.SubjectId == id);
+            if (Val != null)
+            {
+                if (Val.IsRefunded == 0)
+                {
+                    Val.IsRefunded = 1;
+                    //this.Entry(Operation).State = EntityState.Modified;
+                    this.SaveChanges();
+                    retVal = (int)ErrorCodes.OperationSuccess;
+                }
+                else
+                    retVal = (int)ErrorCodes.PaymentRefunded;
+            }
+            else
+                retVal = (int)ErrorCodes.WrongOrderId;
+
+            return retVal;
+        }
+
+        public int PayIn(double subjectId, double cardNumber, decimal expireDate, short cvv, string cardHolder, long amount)
+        {
+            int retVal = (int)ErrorCodes.UnknownError;
+            var Value = Deposit.Where(x => x.ExpireDate == expireDate && x.CardNumber == cardNumber && x.CVV == cvv)
+                .Join(Customers,
+                        d => d.CardHolder,
+                        c => c.Id,
+                        (d, e) => new
+                        {
+                            ExpireDate = d.ExpireDate,
+                            CardId = d.Id,
+                            Amount = d.Amount
+                        }).FirstOrDefault();
+            if (Value != null)
+            {
+                if (Value.Amount - amount > 0)
+                {
+                    if (Value.ExpireDate > decimal.Parse(DateTime.Now.ToString("yyyy.MM")))
+                    {
+                        Operation.Add(new Cards_Operations
+                        {
+                            CardId = Value.CardId,
+                            SubjectId = (int)subjectId,
+                            Amount = amount,
+                            IsRefunded = 0,//default
+                        });
+                        this.SaveChanges();
+                        retVal = (int)ErrorCodes.OperationSuccess;
+                    }
+                    else
+                        retVal = (int)ErrorCodes.Cardisexpired;
+                }
+                else
+                    retVal = (int)ErrorCodes.Insufficientbalance;
+            }
+            else
+                retVal = (int)ErrorCodes.WrongUserData;
+            //Customers.Where(x => (x.SecondName + x.FirstName) == cardHolder)
+            //    .Where(x => x.Card_Deposit.Where(z => z.CVV == cvv && z.ExpireDate == expireDate)
             return retVal;
         }
     }

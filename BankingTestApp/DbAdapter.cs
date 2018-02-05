@@ -88,14 +88,27 @@ namespace BankingTestApp
 
                 if (reader.Read() == true)
                 {
+                    //
+
                     double amount = double.Parse(reader["Amount"].ToString());
                     double cardNum = double.Parse(reader["CardId"].ToString());
-
-                    sc.CommandText = $"UPDATE {ConstVar.DbOperationTable} SET IsRefunded=1 WHERE SubjectId={id}";
-                    sc.ExecuteNonQuery();
-                    //refund amount to deposit
-                    sc.CommandText = $"UPDATE {ConstVar.DbDepositCardsTable} SET Amount=Amount+{amount} WHERE Id={cardNum}";
-                    sc.ExecuteNonQuery();
+                    int isAlreadyRefunded = int.Parse(reader["IsRefunded"].ToString());
+                    //
+                    reader.Close();
+                    reader = null;
+                    //
+                    if (isAlreadyRefunded == 0)
+                    {
+                        sc.CommandText = $"UPDATE {ConstVar.DbOperationTable} SET IsRefunded=1 WHERE SubjectId={id}";
+                        if (sc.ExecuteNonQuery() == 1)
+                            retVal = (int)ErrorCodes.OperationSuccess;
+                        //Added Trigger
+                        ////refund amount to deposit 
+                        //sc.CommandText = $"UPDATE {ConstVar.DbDepositCardsTable} SET Amount=Amount+{amount} WHERE Id={cardNum}";
+                        //sc.ExecuteNonQuery();
+                    }
+                    else
+                        retVal = (int)ErrorCodes.PaymentRefunded;
                 }
                 else
                     retVal = (int)ErrorCodes.WrongOrderId;//6 payment not exist

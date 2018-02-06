@@ -54,7 +54,7 @@ namespace ClientApp
             get { return base.SecondName; }
             set
             {
-                base.SecondName = value;
+                base.SecondName = value.Trim();
                 NotifyPropertyChanged("SecondName");
             }
         }
@@ -64,7 +64,7 @@ namespace ClientApp
             get { return base.FirstName; }
             set
             {
-                base.FirstName = value;
+                base.FirstName = value.Trim();
                 NotifyPropertyChanged("FirstName");
             }
         }

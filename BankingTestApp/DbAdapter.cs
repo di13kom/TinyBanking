@@ -264,16 +264,18 @@ namespace BankingTestApp
             int retVal = (int)ErrorCodes.UnknownError;
             try
             {
-                var Value = Deposit.Where(x => x.ExpireDate == expireDate && x.CardNumber == cardNumber && x.CVV == cvv)
+                var Value = Deposit
                     .Join(Customers,
                             d => d.CardHolder,
                             c => c.Id,
-                            (d, e) => new
-                            {
-                                d.ExpireDate,
-                                CardId = d.Id,
-                                d.Amount
-                            }).FirstOrDefault();
+                            (d, c) => new
+                            { d, c }).Where(x => x.d.ExpireDate == expireDate && x.d.CardNumber == cardNumber && x.d.CVV == cvv && (x.c.SecondName + " " + x.c.FirstName) == cardHolder)
+                .Select(z => new
+                {
+                    z.d.Amount,
+                    z.d.ExpireDate,
+                    CardId = z.c.Id
+                }).FirstOrDefault();
                 if (Value != null)
                 {
                     if (Value.Amount - amount > 0)

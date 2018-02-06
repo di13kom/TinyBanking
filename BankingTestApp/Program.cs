@@ -20,20 +20,17 @@ namespace BankingTestApp
     {
         private static SemaphoreSlim Sem;
         private static IDbClass DBClass;
-        //private static DataBaseContext DbContext;
 
         static void Main(string[] args)
         {
             Sem = new SemaphoreSlim(0);
             //DBClass = new DbAdapter_Class();
 
-            DBClass = new DbAdapter_Class();
+            DBClass = new DataBaseContext();
             
 
             try
             {
-                //DBClass.test();
-
                 HttpListener listener = new HttpListener();
                 foreach (var str in ConstVar.Prefixes)
                 {

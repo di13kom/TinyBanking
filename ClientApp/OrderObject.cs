@@ -100,7 +100,7 @@ namespace ClientApp
 
             set
             {
-                _message = value;
+                _message = string.Join(" - ",DateTime.Now.ToString(), value);
                 NotifyPropertyChanged("Message");
             }
         }

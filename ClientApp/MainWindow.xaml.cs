@@ -27,7 +27,7 @@ namespace ClientApp
     {
         UserObject_Class BankingObject;
         StatusReflection MessWithStatus = new StatusReflection();
-        HttpClient NetworkClient;
+        NetworkAgent NetAgent;
 
         public MainWindow()
         {
@@ -40,7 +40,7 @@ namespace ClientApp
             this.DataContext = BankingObject;
             MainTextBlock.DataContext = MessWithStatus;
 
-            NetworkClient = new HttpClient();
+            NetAgent = new NetworkAgent();
         }
 
         private async void Ok_Button_Click(object sender, RoutedEventArgs e)
@@ -67,7 +67,7 @@ namespace ClientApp
             try
             {
                 url = baseUrl + uri;
-                using (HttpResponseMessage response = await SendAsync(url))
+                using (HttpResponseMessage response = await NetAgent.SendAsync(url, BankingObject))
                 {
                     respString = await response.Content.ReadAsStringAsync();
                     jObj = JObject.Parse(respString);
@@ -79,20 +79,6 @@ namespace ClientApp
             {
                 //MessageBox.Show(ex.Message);
                 MessWithStatus.SetValues(ex.Message, true);
-            }
-        }
-
-        async Task<HttpResponseMessage> SendAsync(string inUrl)
-        {
-            StringContent strCont;
-            string jsonObj = JsonConvert.SerializeObject(BankingObject);
-
-            using (strCont = new StringContent(jsonObj, Encoding.UTF8, ConstVar.JsonMIME))
-            {
-                //strCont.Headers.Add("Allow", "Application/json");
-                //strCont.Headers.Add("Content-type", "Aplication/json");
-                strCont.Headers.Add("Content-Length", jsonObj.Length.ToString());
-                return await NetworkClient.PostAsync(inUrl, strCont);
             }
         }
 

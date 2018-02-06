@@ -202,84 +202,107 @@ namespace BankingTestApp
         public DbSet<Cards_Operations> Operation { get; set; }
         public DataBaseContext() : base("DefaultConnection")
         {
-            Customers.Load();
-            Deposit.Load();
-            Operation.Load();
+            try
+            {
+                Customers.Load();
+                Deposit.Load();
+                Operation.Load();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
         }
 
         public int GetPaymentStatus(double id)
         {
             int retVal = (int)ErrorCodes.UnknownError;
-            var Val = Operation.FirstOrDefault(x => x.SubjectId == id);
-            if (Val != null)
-                retVal = Val.IsRefunded;
-            else
-                retVal = (int)ErrorCodes.WrongOrderId;
+            try
+            {
+                var Val = Operation.FirstOrDefault(x => x.SubjectId == id);
+                if (Val != null)
+                    retVal = Val.IsRefunded;
+                else
+                    retVal = (int)ErrorCodes.WrongOrderId;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
             return retVal;
         }
 
         public int RefundPayment(double id)
         {
             int retVal = (int)ErrorCodes.UnknownError;
-
-            var Val = Operation.FirstOrDefault(x => x.SubjectId == id);
-            if (Val != null)
+            try
             {
-                if (Val.IsRefunded == 0)
+                var Val = Operation.FirstOrDefault(x => x.SubjectId == id);
+                if (Val != null)
                 {
-                    Val.IsRefunded = 1;
-                    //this.Entry(Operation).State = EntityState.Modified;
-                    this.SaveChanges();
-                    retVal = (int)ErrorCodes.OperationSuccess;
+                    if (Val.IsRefunded == 0)
+                    {
+                        Val.IsRefunded = 1;
+                        this.SaveChanges();
+                        retVal = (int)ErrorCodes.OperationSuccess;
+                    }
+                    else
+                        retVal = (int)ErrorCodes.PaymentRefunded;
                 }
                 else
-                    retVal = (int)ErrorCodes.PaymentRefunded;
+                    retVal = (int)ErrorCodes.WrongOrderId;
             }
-            else
-                retVal = (int)ErrorCodes.WrongOrderId;
-
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
             return retVal;
         }
 
         public int PayIn(double subjectId, double cardNumber, decimal expireDate, short cvv, string cardHolder, long amount)
         {
             int retVal = (int)ErrorCodes.UnknownError;
-            var Value = Deposit.Where(x => x.ExpireDate == expireDate && x.CardNumber == cardNumber && x.CVV == cvv)
-                .Join(Customers,
-                        d => d.CardHolder,
-                        c => c.Id,
-                        (d, e) => new
-                        {
-                            ExpireDate = d.ExpireDate,
-                            CardId = d.Id,
-                            Amount = d.Amount
-                        }).FirstOrDefault();
-            if (Value != null)
+            try
             {
-                if (Value.Amount - amount > 0)
+                var Value = Deposit.Where(x => x.ExpireDate == expireDate && x.CardNumber == cardNumber && x.CVV == cvv)
+                    .Join(Customers,
+                            d => d.CardHolder,
+                            c => c.Id,
+                            (d, e) => new
+                            {
+                                d.ExpireDate,
+                                CardId = d.Id,
+                                d.Amount
+                            }).FirstOrDefault();
+                if (Value != null)
                 {
-                    if (Value.ExpireDate > decimal.Parse(DateTime.Now.ToString("yyyy.MM")))
+                    if (Value.Amount - amount > 0)
                     {
-                        Operation.Add(new Cards_Operations
+                        if (Value.ExpireDate > decimal.Parse(DateTime.Now.ToString("yyyy.MM")))
                         {
-                            CardId = Value.CardId,
-                            SubjectId = (int)subjectId,
-                            Amount = amount,
-                            IsRefunded = 0,//default
-                        });
-                        this.SaveChanges();
-                        retVal = (int)ErrorCodes.OperationSuccess;
+                            Operation.Add(new Cards_Operations
+                            {
+                                CardId = Value.CardId,
+                                SubjectId = (int)subjectId,
+                                Amount = amount,
+                                IsRefunded = 0,//default
+                            });
+                            this.SaveChanges();
+                            retVal = (int)ErrorCodes.OperationSuccess;
+                        }
+                        else
+                            retVal = (int)ErrorCodes.Cardisexpired;
                     }
                     else
-                        retVal = (int)ErrorCodes.Cardisexpired;
+                        retVal = (int)ErrorCodes.Insufficientbalance;
                 }
                 else
-                    retVal = (int)ErrorCodes.Insufficientbalance;
+                    retVal = (int)ErrorCodes.WrongUserData;
             }
-            else
-                retVal = (int)ErrorCodes.WrongUserData;
-            //Customers.Where(x => (x.SecondName + x.FirstName) == cardHolder)
-            //    .Where(x => x.Card_Deposit.Where(z => z.CVV == cvv && z.ExpireDate == expireDate)
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
             return retVal;
         }
     }

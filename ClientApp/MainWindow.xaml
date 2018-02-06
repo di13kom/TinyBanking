@@ -95,13 +95,16 @@
                         <Label Content="Card number:" Width="120"/>
                         <TextBox Text="{Binding Path=CardNumber, Mode=TwoWay}" HorizontalContentAlignment="Right"/>
                     </DockPanel>
-                    <DockPanel Grid.Row="1" VerticalAlignment="Center">
+                    <DockPanel Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Stretch">
                         <Label Content="Cardholder:" Width="120"/>
-                        <TextBox Text="{Binding Path=CardHolder, Mode=TwoWay}" HorizontalContentAlignment="Right"/>
+                        <Label Content="FirstName:" />
+                        <TextBox Text="{Binding Path=FirstName, Mode=TwoWay}" HorizontalContentAlignment="Right" VerticalAlignment="Center" MinWidth="100"/>
+                        <Label Content="SecondName:" />
+                        <TextBox Text="{Binding Path=SecondName, Mode=TwoWay}" HorizontalContentAlignment="Right" VerticalAlignment="Center" MinWidth="100"/>
                     </DockPanel>
                     <DockPanel Grid.Row="2" VerticalAlignment="Center">
                         <Label Content="CVV:" Width="120"/>
-                        <TextBox Text="{Binding Path=Cvv, Mode=TwoWay}" HorizontalContentAlignment="Right"/>
+                        <TextBox Text="{Binding Path=CVV, Mode=TwoWay}" HorizontalContentAlignment="Right"/>
                     </DockPanel>
                     <DockPanel Grid.Row="3" VerticalAlignment="Center">
                         <Label Content="Expiry month:" Width="120"/>

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CommonLib;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,14 +7,15 @@ using System.Threading.Tasks;
 
 namespace ClientApp
 {
-    public class BankObject
+    public class BankObject : ICustomers, IDeposit
     {
         long _orderId;
         Int64 _amount;
         double _cardNumber;
         decimal _expireDate;
         short _cvv;
-        string _cardholder;
+        string _firstName;
+        string _secondName;
 
         virtual public Int64 Amount
         {
@@ -68,7 +70,7 @@ namespace ClientApp
             }
         }
 
-        virtual public short Cvv
+        virtual public short CVV
         {
             get
             {
@@ -81,19 +83,6 @@ namespace ClientApp
                     _cvv = value;
                 else
                     _cvv = 0;
-            }
-        }
-
-        virtual public string CardHolder
-        {
-            get
-            {
-                return _cardholder;
-            }
-
-            set
-            {
-                _cardholder = value;
             }
         }
 
@@ -110,6 +99,23 @@ namespace ClientApp
                     _orderId = value;
                 else
                     _orderId = 0;
+            }
+        }
+
+        virtual public string FirstName
+        {
+            get { return _firstName; }
+            set
+            {
+                _firstName = value;
+            }
+        }
+        virtual public string SecondName
+        {
+            get { return _secondName; }
+            set
+            {
+                _secondName = value;
             }
         }
     }

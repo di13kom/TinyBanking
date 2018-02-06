@@ -27,7 +27,7 @@ namespace BankingTestApp
             Sem = new SemaphoreSlim(0);
             //DBClass = new DbAdapter_Class();
 
-            DBClass = new DataBaseContext();
+            DBClass = new DbAdapter_Class();
             
 
             try
@@ -94,15 +94,15 @@ namespace BankingTestApp
 
                 double idVal = double.Parse(jObj["OrderId"].ToString());
                 if (reqUrl == ConstVar.Prefixes[0])// "/PayIn/":
-                                                   //stringOut = $"{{\"Status\":\"Ok\", \"Sum\":{jObj["Amount"]}}}";
                 {
                     double cardNum = double.Parse(jObj["CardNumber"].ToString());
                     decimal expDate = decimal.Parse(jObj["ExpireDate"].ToString());
-                    short cvv = short.Parse(jObj["Cvv"].ToString());
-                    string cardHolder = jObj["CardHolder"].ToString();
+                    short cvv = short.Parse(jObj["CVV"].ToString());
+                    string firstName = jObj["FirstName"].ToString();
+                    string SecondName = jObj["SecondName"].ToString();
                     long amount = long.Parse(jObj["Amount"].ToString());
 
-                    val = DBClass.PayIn(idVal, cardNum, expDate, cvv, cardHolder, amount);
+                    val = DBClass.PayIn(idVal, cardNum, expDate, cvv, string.Join(" ", SecondName, firstName), amount);
                 }
                 else if (reqUrl == ConstVar.Prefixes[1])// "/Refund/":
                 {

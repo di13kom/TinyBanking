@@ -39,23 +39,33 @@ namespace ClientApp
             }
         }
 
-        override public short Cvv
+        override public short CVV
         {
-            get { return base.Cvv; }
+            get { return base.CVV; }
             set
             {
-                base.Cvv = value;
-                NotifyPropertyChanged("Cvv");
+                base.CVV = value;
+                NotifyPropertyChanged("CVV");
             }
         }
 
-        override public string CardHolder
+        override public string SecondName
         {
-            get { return base.CardHolder; }
+            get { return base.SecondName; }
             set
             {
-                base.CardHolder = value;
-                NotifyPropertyChanged("CardHolder");
+                base.SecondName = value;
+                NotifyPropertyChanged("SecondName");
+            }
+        }
+
+        override public string FirstName
+        {
+            get { return base.FirstName; }
+            set
+            {
+                base.FirstName = value;
+                NotifyPropertyChanged("FirstName");
             }
         }
 

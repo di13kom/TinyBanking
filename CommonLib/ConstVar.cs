@@ -12,6 +12,8 @@ namespace CommonLib
             OperationSuccess = 0,
             PaymentRefunded = 1,
             WrongOrderId = 6,
+            SubjectIdNotUnique = 7,
+            WrongAmount = 8,
             WrongUserData = 10,
             Insufficientbalance = 20,
             Cardisexpired = 30
@@ -26,6 +28,8 @@ namespace CommonLib
             { 0,    "Operation Success" },
             { 1,    "Payment Refunded" },
             { 6,    "Wrong OrderId" },
+            { 7,    "SubjectId Not Unique"},
+            { 8,    "Wrong Amoung"},
             { 10,   "Wrong User Data" },
             { 20,   "Insufficient balance" },
             { 30,   "Card is expired" },

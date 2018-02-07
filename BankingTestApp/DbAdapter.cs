@@ -220,10 +220,15 @@ namespace BankingTestApp
             try
             {
                 var Val = Operation.FirstOrDefault(x => x.SubjectId == id);
-                if (Val != null)
-                    retVal = Val.IsRefunded;
+                if (Val == null)
+                    throw new DbException(ErrorCodes.WrongOrderId);
                 else
-                    retVal = (int)ErrorCodes.WrongOrderId;
+                    retVal = Val.IsRefunded;
+
+            }
+            catch (DbException dbEx)
+            {
+                retVal = (int)dbEx.Id;
             }
             catch (Exception ex)
             {
@@ -238,19 +243,20 @@ namespace BankingTestApp
             try
             {
                 var Val = Operation.FirstOrDefault(x => x.SubjectId == id);
-                if (Val != null)
-                {
-                    if (Val.IsRefunded == 0)
-                    {
-                        Val.IsRefunded = 1;
-                        this.SaveChanges();
-                        retVal = (int)ErrorCodes.OperationSuccess;
-                    }
-                    else
-                        retVal = (int)ErrorCodes.PaymentRefunded;
-                }
-                else
-                    retVal = (int)ErrorCodes.WrongOrderId;
+
+                if (Val == null)
+                    throw new DbException(ErrorCodes.WrongOrderId);
+                if (Val.IsRefunded > 0)
+                    throw new DbException(ErrorCodes.PaymentRefunded);
+
+                Val.IsRefunded = 1;
+                this.SaveChanges();
+                retVal = (int)ErrorCodes.OperationSuccess;
+
+            }
+            catch (DbException dbEx)
+            {
+                retVal = (int)dbEx.Id;
             }
             catch (Exception ex)
             {
@@ -259,53 +265,70 @@ namespace BankingTestApp
             return retVal;
         }
 
-        public int PayIn(double subjectId, double cardNumber, decimal expireDate, short cvv, string cardHolder, long amount)
+        public int PayIn(double subjectId, double cardNumber, decimal expireDate, short cvv, string cardHolder, long in_amount)
         {
             int retVal = (int)ErrorCodes.UnknownError;
             try
             {
+                if (Operation.Any(x => x.SubjectId == subjectId))
+                    throw new DbException(ErrorCodes.SubjectIdNotUnique);
+                if (in_amount <= 0)
+                    throw new DbException(ErrorCodes.WrongAmount);
+
                 var Value = Deposit
-                    .Join(Customers,
-                            d => d.CardHolder,
-                            c => c.Id,
-                            (d, c) => new
-                            { d, c }).Where(x => x.d.ExpireDate == expireDate && x.d.CardNumber == cardNumber && x.d.CVV == cvv && (x.c.SecondName + " " + x.c.FirstName) == cardHolder)
-                .Select(z => new
-                {
-                    z.d.Amount,
-                    z.d.ExpireDate,
-                    CardId = z.c.Id
-                }).FirstOrDefault();
-                if (Value != null)
-                {
-                    if (Value.Amount - amount > 0)
+                    .Where(x => x.ExpireDate == expireDate && x.CardNumber == cardNumber && x.CVV == cvv && (x.Customers.SecondName + " " + x.Customers.FirstName) == cardHolder)
+                    .Select(z => new
                     {
-                        if (Value.ExpireDate > decimal.Parse(DateTime.Now.ToString("yyyy.MM")))
-                        {
-                            Operation.Add(new Cards_Operations
-                            {
-                                CardId = Value.CardId,
-                                SubjectId = (int)subjectId,
-                                Amount = amount,
-                                IsRefunded = 0,//default
-                            });
-                            this.SaveChanges();
-                            retVal = (int)ErrorCodes.OperationSuccess;
-                        }
-                        else
-                            retVal = (int)ErrorCodes.Cardisexpired;
-                    }
-                    else
-                        retVal = (int)ErrorCodes.Insufficientbalance;
-                }
-                else
-                    retVal = (int)ErrorCodes.WrongUserData;
+                        z.Amount,
+                        z.ExpireDate,
+                        CardId = z.Id
+                    })
+                    .FirstOrDefault();
+
+                if (Value == null)
+                    throw new DbException(ErrorCodes.WrongOrderId);
+
+                if (Value.Amount < in_amount)
+                    throw new DbException(ErrorCodes.Insufficientbalance);
+
+                if (Value.ExpireDate < decimal.Parse(DateTime.Now.ToString("yyyy.MM")))
+                    throw new DbException(ErrorCodes.Cardisexpired);
+
+                Operation.Add(new Cards_Operations
+                {
+                    CardId = Value.CardId,
+                    SubjectId = (int)subjectId,
+                    Amount = in_amount,
+                    IsRefunded = 0,//default
+                });
+                this.SaveChanges();
+                retVal = (int)ErrorCodes.OperationSuccess;
+            }
+            catch (DbException dbEx)
+            {
+                retVal = (int)dbEx.Id;
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
             }
             return retVal;
+        }
+
+        private class DbException : Exception
+        {
+            private ErrorCodes _id;
+
+            public DbException(ErrorCodes id)
+            {
+                _id = id;
+            }
+
+            public ErrorCodes Id
+            {
+                get { return _id; }
+                set { _id = value; }
+            }
         }
     }
 }
